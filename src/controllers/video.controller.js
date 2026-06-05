@@ -295,14 +295,15 @@ const updateVideo = asyncHandler(async (req, res) => {
         updateData.description = description.trim()
     }
     
-    if (req.files?.thumbnail?.[0]?.path) {
-        const thumbnailLocalPath = req.files.thumbnail[0].path
+    const thumbnailLocalPath = req.files?.thumbnail?.[0]?.path || req.file?.path
+
+    if (thumbnailLocalPath) {
         const thumbnailUploadResponse = await uploadOnCloudinary(thumbnailLocalPath)
-        
+
         if (!thumbnailUploadResponse) {
             throw new ApiError(400, "Failed to upload thumbnail")
         }
-        
+
         updateData.thumbnail = thumbnailUploadResponse.url
     }
     
