@@ -16,7 +16,7 @@ const generateAccessAndRefreshTokens = async(userId) => {
 
         return {accessToken, refreshToken}
     } catch (error) {
-        throw new ApiError(500, "Something went wrong while generating referesh and access token")
+        throw new ApiError(500, "Something went wrong while generating refresh and access token")
     }
 }
 
@@ -94,7 +94,7 @@ const loginUser = asyncHandler(async (req, res) =>{
     //username or email
     //find the user
     //password check
-    //access and referesh token
+    //access and refresh token
     //send cookie
 
     const {email, username, password} = req.body
@@ -123,7 +123,7 @@ const loginUser = asyncHandler(async (req, res) =>{
     throw new ApiError(401, "Invalid user credentials")
     }
 
-   const {accessToken, refreshToken} = await generateAccessAndRefereshTokens(user._id)
+    const {accessToken, refreshToken} = await generateAccessAndRefreshTokens(user._id)
 
    const loggedInUser = await User.findById(user._id).select("-password -refreshToken")
 
@@ -199,16 +199,16 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
             httpOnly: true,
             secure: true
         }
-        const {accessToken, newRefreshToken} = await generateAccessAndRefereshTokens(user._id)
-    
+        const {accessToken, refreshToken} = await generateAccessAndRefreshTokens(user._id)
+
         return res
         .status(200)
         .cookie("accessToken", accessToken, options)
-        .cookie("refreshToken", newRefreshToken, options)
+        .cookie("refreshToken", refreshToken, options)
         .json(
             new ApiResponse(
                 200, 
-                {accessToken, refreshToken: newRefreshToken},
+                {accessToken, refreshToken},
                 "Access token refreshed"
             )
         )
